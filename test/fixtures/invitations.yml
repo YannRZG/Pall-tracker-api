@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  email: MyString
+  role: 1
+  company: one
+  token: MyString
+  invited_at: 2026-01-09 16:55:05
+
+two:
+  email: MyString
+  role: 1
+  company: two
+  token: MyString
+  invited_at: 2026-01-09 16:55:05
