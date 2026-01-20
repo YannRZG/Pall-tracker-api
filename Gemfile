@@ -49,20 +49,20 @@ group :development, :test do
 end
 
 # Auth
-gem 'devise'
-gem 'devise-jwt'
+gem "devise"
+gem "devise-jwt"
 
 # Mails
-gem 'mailjet'
+gem "mailjet"
 
 # Jobs pour envois de mails
-gem 'sidekiq'
-gem 'sidekiq-cron'
+gem "sidekiq"
+gem "sidekiq-cron"
 
 # Table-print
-gem 'table_print'
+gem "table_print"
 
-gem 'dotenv-rails'
+gem "dotenv-rails"
 
 gem "rubocop", "~> 1.82"
 

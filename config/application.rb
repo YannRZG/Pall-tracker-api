@@ -16,11 +16,11 @@ module PallTrackerApi
     # --------------------------
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'http://localhost:5173'
-    
-        resource '*',
+        origins "http://localhost:5173"
+
+        resource "*",
           headers: :any,
-          methods: [:get, :post, :put, :patch, :delete, :options],
+          methods: [ :get, :post, :put, :patch, :delete, :options ],
           credentials: true
       end
     end

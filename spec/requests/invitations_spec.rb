@@ -9,14 +9,13 @@ RSpec.describe "Invitations", type: :request do
 
   it "creates user from invitation without auth" do
     invitation = create(:invitation)
-  
+
     post "/signup_from_invite", params: {
       token: invitation.token,
       password: "password",
       password_confirmation: "password"
     }
-  
+
     expect(response).to have_http_status(:created)
   end
-  
 end

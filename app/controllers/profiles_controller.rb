@@ -13,16 +13,16 @@ class ProfilesController < ApplicationController
 
   def update
     current_user.update!(user_params)
-  
+
     if current_user.admin? && params[:company]
       current_user.company.update!(
         params.require(:company).permit(:street, :zipcode, :country)
       )
     end
-  
+
     render json: { user: current_user, company: current_user.company }
   end
-  
+
   def update_password
     if current_user.update(password_params)
       render json: { success: true }

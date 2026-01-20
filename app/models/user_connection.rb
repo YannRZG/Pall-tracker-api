@@ -3,7 +3,7 @@ class UserConnection < ApplicationRecord
   belongs_to :receiver,  class_name: "Company"
   belongs_to :role
 
-  enum :status,{
+  enum :status, {
     pending: 0,
     accepted: 1,
     rejected: 2

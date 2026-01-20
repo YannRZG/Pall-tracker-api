@@ -1,5 +1,5 @@
 class InvitationMailer < ApplicationMailer
-  default from: ENV['MAILJET_DEFAULT_FROM']
+  default from: ENV["MAILJET_DEFAULT_FROM"]
 
   def invite_to_register(email:, inviter:, token:)
     @inviter_company_name = inviter.company&.name || "Une société"

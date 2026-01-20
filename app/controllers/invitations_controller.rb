@@ -1,11 +1,11 @@
 class InvitationsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:show]
+  skip_before_action :authenticate_user!, only: [ :show ]
 
   def show
     invitation = Invitation.find_by(token: params[:token])
-  
+
     return render json: { error: "Invitation not found" }, status: :not_found unless invitation
-  
+
     render json: {
       invitation: {
         email: invitation.email,
@@ -13,6 +13,5 @@ class InvitationsController < ApplicationController
         company_name: invitation.company.name
       }
     }
-  end  
-  
+  end
 end

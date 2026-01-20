@@ -1,6 +1,6 @@
 # app/controllers/admin/companies_controller.rb
 class Admin::CompaniesController < ApplicationController
-  before_action :set_signup_request, only: [:approve]
+  before_action :set_signup_request, only: [ :approve ]
 
   # GET /admin/companies
   def index

@@ -7,8 +7,8 @@ class User < ApplicationRecord
 
   scope :active, -> { where(deleted_at: nil) }
 
-  #enum :function, { shipper: 0, carrier: 1, recipient: 2, admin: 3 }
-  #enum :function, { user: 0, super_admin: 1 }
+  # enum :function, { shipper: 0, carrier: 1, recipient: 2, admin: 3 }
+  # enum :function, { user: 0, super_admin: 1 }
 
   validates :password, length: { minimum: 6 }, if: -> { new_record? || !password.nil? }
   validate :company_presence_unless_super_admin

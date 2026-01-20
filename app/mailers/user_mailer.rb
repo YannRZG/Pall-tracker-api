@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  default from: ENV['MAILJET_DEFAULT_FROM']
+  default from: ENV["MAILJET_DEFAULT_FROM"]
 
 
 # app/mailers/user_mailer.rb
@@ -44,6 +44,6 @@ end
       @email = params[:email]
       @message = params[:message]
       @url = application_url
-      mail(to:  @email, subject: 'RAYM Marketplacet: Nous avons reçu votre message')
+      mail(to:  @email, subject: "RAYM Marketplacet: Nous avons reçu votre message")
     end
 end

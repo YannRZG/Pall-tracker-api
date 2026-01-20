@@ -5,13 +5,13 @@ class CompanyUsersController < ApplicationController
   # Liste tous les users de la company
   def index
     users = current_user.company.users.active.order(:email)
-    render json: users.as_json(only: [:id, :email, :first_name, :last_name]).map { |u| u.merge(role: current_user.company.role.name) }
+    render json: users.as_json(only: [ :id, :email, :first_name, :last_name ]).map { |u| u.merge(role: current_user.company.role.name) }
   end
 
   # Créer une invitation (pas encore de user)
   def invite
     invitation = current_user.company.invitations.find_or_initialize_by(email: params[:email])
-  
+
     if invitation.save
       UserMailer.invite_email(invitation).deliver_later
       render json: { message: "Invitation envoyée à #{invitation.email}" }, status: :ok

@@ -39,13 +39,13 @@ Rails.application.configure do
   # Use SMTP with Mailjet
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:              'in-v3.mailjet.com',
+    address:              "in-v3.mailjet.com",
     port:                 587,
-    user_name:            ENV['MAILJET_API_KEY'],      # clé publique Mailjet
-    password:             ENV['MAILJET_SECRET_KEY'],   # clé secrète Mailjet
-    authentication:       'plain',
+    user_name:            ENV["MAILJET_API_KEY"],      # clé publique Mailjet
+    password:             ENV["MAILJET_SECRET_KEY"],   # clé secrète Mailjet
+    authentication:       "plain",
     enable_starttls_auto: true,
-    openssl_verify_mode:  'none' # ⚠️ seulement en dev
+    openssl_verify_mode:  "none" # ⚠️ seulement en dev
   }
 
   # Print deprecation notices to the Rails logger.
@@ -79,7 +79,7 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # Session cookies
-  config.session_store :cookie_store, key: '_your_app_session'
+  config.session_store :cookie_store, key: "_your_app_session"
   config.middleware.use ActionDispatch::Cookies
   config.middleware.use config.session_store, config.session_options
 end

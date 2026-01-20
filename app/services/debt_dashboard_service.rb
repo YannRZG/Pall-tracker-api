@@ -22,7 +22,7 @@ class DebtDashboardService
 
   private
 
-    # ----------------------
+  # ----------------------
   # Admin → voir toutes les dettes de la company
   # ----------------------
   def debt_for_admin
@@ -157,4 +157,3 @@ class DebtDashboardService
     { owed_by_me: owed_by_me, owed_to_me: owed_to_me }
   end
 end
-

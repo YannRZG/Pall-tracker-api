@@ -1,5 +1,5 @@
 class UserConnectionMailer < ApplicationMailer
-  default from: ENV['MAILJET_DEFAULT_FROM']
+  default from: ENV["MAILJET_DEFAULT_FROM"]
 
   def invitation_email
     @connection = params[:connection]

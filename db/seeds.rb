@@ -108,7 +108,7 @@ puts "✅ #{connections.count} connexions créées"
 # PALETTE RECORDS (LIÉES AUX CONNEXIONS)
 # ============================================================
 puts "📦 Création des PaletteRecords..."
-comments = ["RAS", "Livraison OK", "Problème signalé"]
+comments = [ "RAS", "Livraison OK", "Problème signalé" ]
 transport_codes = Set.new
 
 def unique_transport(existing)

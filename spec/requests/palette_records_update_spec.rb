@@ -31,7 +31,6 @@ RSpec.describe "PaletteRecords#update", type: :request do
   let(:headers) { auth_headers(shipper) }
 
   describe "PATCH /palette_records/:id" do
-
     context "with accepted connection" do
       it "updates the record" do
         patch "/palette_records/#{palette_record.id}",

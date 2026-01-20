@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :palette_record do
     company
-    user           
+    user
     user_connection
 
     shipper   { user_connection.shipper }

@@ -14,5 +14,4 @@ class Invitation < ApplicationRecord
   def set_invited_at
     self.invited_at = Time.current
   end
-
 end

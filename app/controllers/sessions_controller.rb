@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:create]
+  skip_before_action :authenticate_user!, only: [ :create ]
 
   def create
     user = User.authenticate_by(
@@ -15,7 +15,7 @@ class SessionsController < ApplicationController
 
     render json: {
       user: user.as_json(
-        only: [:id, :email, :role, :company_id]
+        only: [ :id, :email, :role, :company_id ]
       )
     }
   end

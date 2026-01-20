@@ -13,8 +13,8 @@ class UsersConnectionsController < ApplicationController
     render json: connections.as_json(
       include: {
         role: {},
-        requester: { only: [:id, :name] },
-        receiver: { only: [:id, :name] }
+        requester: { only: [ :id, :name ] },
+        receiver: { only: [ :id, :name ] }
       }
     )
   end
@@ -22,24 +22,24 @@ class UsersConnectionsController < ApplicationController
   def create
     email = params.dig(:users_connection, :email)
     role_code = params.dig(:users_connection, :role)
-  
+
     receiver_company = Company
       .joins(:users)
       .find_by(users: { email: email })
-    
+
     return render json: { error: "Société introuvable" }, status: :not_found unless receiver_company
     return render json: { error: "Impossible d'inviter sa propre société" }, status: :unprocessable_entity if receiver_company == current_user.company
-    
+
     role = Role.find_by(code: role_code)
     return render json: { error: "Rôle invalide" }, status: :unprocessable_entity unless role
-  
+
     connection = UserConnection.new(
       requester: current_user.company,
       receiver: receiver_company,
       role: role,
       status: :pending
     )
-  
+
     if connection.save
       UserConnectionMailer.with(connection: connection).invitation_email.deliver_later
       render json: connection, status: :created
@@ -47,7 +47,7 @@ class UsersConnectionsController < ApplicationController
       render json: { errors: connection.errors.full_messages }, status: :unprocessable_entity
     end
   end
-  
+
   def update
     connection = UserConnection.find(params[:id])
 
