@@ -3,16 +3,17 @@ class UserMailer < ApplicationMailer
 
 
 # app/mailers/user_mailer.rb
-  def invite_email(invitation)
-    @invitation = invitation
-    # Génère l'URL complète avec host
-    @accept_url = accept_invitation_url(
-      token: @invitation.token,
-      host: Rails.application.config.action_mailer.default_url_options[:host],
-      port: Rails.application.config.action_mailer.default_url_options[:port]
-    )
-    mail(to: @invitation.email, subject: "Vous êtes invité(e) !")
-  end
+def invite_email(invitation)
+  @invitation = invitation
+
+  # Lien direct vers le frontend Vue.js pour signup depuis invitation
+  @accept_url = "#{ENV['FRONTEND_URL']}/signup-from-invite?token=#{@invitation.token}"
+
+  mail(
+    to: @invitation.email,
+    subject: "Vous êtes invité(e) !"
+  )
+end
 
 
   def debt_summary(user)
@@ -23,6 +24,17 @@ class UserMailer < ApplicationMailer
     mail(
       to: @user.email,
       subject: "Résumé de votre dette palettes"
+    )
+  end
+
+  def admin_invitation_email(user, temp_password)
+    @user = user
+    @temp_password = temp_password
+    @login_url = "#{ENV['FRONTEND_URL']}/login"
+
+    mail(
+      to: @user.email,
+      subject: "Votre compte admin a été créé"
     )
   end
 

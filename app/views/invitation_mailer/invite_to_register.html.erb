@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        a {
+            color: #1d72b8;
+            text-decoration: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1d72b8;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Invitation à rejoindre Pall Tracker</h2>
+
+    <p>Bonjour,</p>
+
+    <p>
+        Vous êtes invité à rejoindre Pall Tracker par la société
+        <strong><%= @inviter_company_name %></strong>.
+    </p>
+
+    <p>
+        Pour accepter l'invitation et créer votre compte, cliquez sur le lien suivant :
+    </p>
+
+    <p>
+        <a href="<%= @accept_url %>" class="button">Accepter l'invitation</a>
+    </p>
+
+    <p>Merci,<br />
+        L’équipe Pall Tracker
+    </p>
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<!-- app/views/user_connection_mailer/invitation_email.html.erb -->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        a {
+            color: #1d72b8;
+            text-decoration: none;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #1d72b8;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Nouvelle demande de connexion</h2>
+    <p>Bonjour,</p>
+
+    <p>
+        La société <strong><%= @requester.name %></strong> souhaite se connecter à votre entreprise
+        avec le rôle <strong><%= @connection.role.name %></strong>.
+    </p>
+
+    <p>
+        Vous pouvez accepter ou refuser cette demande depuis votre tableau de bord :
+    </p>
+
+    <p>
+        <a href="<%= @dashboard_url %>">Accéder au tableau de bord</a>
+    </p>
+
+
+
+    <p>Merci,<br>L'équipe Pall Tracker</p>
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 0;
+      color: #1f2937;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #4f46e5; /* indigo-600 */
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .button {
+      display: inline-block;
+      background-color: #4f46e5; /* indigo-600 */
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    .features {
+      margin-top: 30px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 20px;
+    }
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .dot {
+      height: 8px;
+      width: 8px;
+      background-color: #4f46e5;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .footer {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #9ca3af;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bienvenue sur Pall Tracker !</h1>
+
+    <p>Bonjour <%= @user.email %>,</p>
+    <p>Votre compte admin a été créé avec succès.</p>
+
+    <p>Voici votre mot de passe temporaire :</p>
+    <p><strong><%= @temp_password %></strong></p>
+
+    <p>Pour vous connecter, cliquez sur le bouton ci-dessous :</p>
+    <a class="button" href="<%= @login_url %>">Se connecter</a>
+
+    <div class="features">
+      <p>Avec Pall Tracker, vous pouvez :</p>
+      <div class="feature-item"><span class="dot"></span>Suivre les mouvements de palettes</div>
+      <div class="feature-item"><span class="dot"></span>Calculer automatiquement les soldes</div>
+      <div class="feature-item"><span class="dot"></span>Gérer les accès par rôle (shipper, carrier, recipient)</div>
+      <div class="feature-item"><span class="dot"></span>Inviter des utilisateurs par entreprise</div>
+    </div>
+
+    <div class="footer">
+      &copy; <%= Time.current.year %> Pall Tracker. Tous droits réservés.
+    </div>
+  </div>
+</body>
+</html>

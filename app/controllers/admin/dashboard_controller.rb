@@ -1,29 +1,25 @@
 class Admin::DashboardController < ApplicationController
   before_action :authenticate_user!
-  before_action :ensure_super_admin
+  before_action :authenticate_super_admin!
 
   def index
-    companies = Company.includes(:users)
-
     render json: {
       stats: {
-        companies_count: Company.count,
-        users_count: User.count,
-        palette_records_count: PaletteRecord.count
+        companies: Company.count,
+        users: User.count,
+        pending: SignupRequest.pending.count
       },
-      companies: companies.map do |c|
+      signup_requests: SignupRequest.pending_requests.map do |req|
         {
-          id: c.id,
-          name: c.name,
-          users: c.users.select(:id, :email, :role)
+          id: req.id,
+          company_name: req.company_name,
+          admin_email: req.admin_email,
+          message: req.message,
+          requested_at: req.created_at,
+          status: req.status # 'pending', 'approved', 'rejected'
         }
       end
     }
   end
-
-  private
-
-  def ensure_super_admin
-    render json: { error: "Accès refusé" }, status: :forbidden unless current_user.super_admin?
-  end
+  
 end

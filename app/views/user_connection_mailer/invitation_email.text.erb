@@ -1,0 +1,11 @@
+<!--app/views/user_connection_mailer/invitation_email.html.erb -->
+
+Bonjour,
+
+Vous avez reçu une demande de connexion de <%= @connection.requester.name %>
+avec le rôle <%= @connection.role.code %>.
+
+Copiez-collez ce lien pour accepter ou refuser : <%= @dashboard_url %>
+
+Merci,
+L'équipe PallTracker

@@ -38,7 +38,7 @@ class CompaniesController < ApplicationController
   
     # Réponse JSON complète
     render json: {
-      company: { id: @company.id, name: @company.name },
+      company: { id: @company.id, name: @company.name, role: @company.role&.name },
       stats: stats,
       users: users,              # <-- ici les users
       records: records.as_json(

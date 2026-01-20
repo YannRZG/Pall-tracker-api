@@ -5,6 +5,9 @@ class CreateCompanies < ActiveRecord::Migration[8.0]
       t.string :street
       t.string :zipcode
       t.string :country
+      t.references :role, foreign_key: true
+      t.boolean :approved, default: false
+      t.datetime :approved_at
 
       t.timestamps
     end

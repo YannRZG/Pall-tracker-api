@@ -1,76 +1,115 @@
 puts "🧹 Suppression des anciennes données..."
-UserConnection.destroy_all
 PaletteRecord.destroy_all
+UserConnection.destroy_all
 User.destroy_all
+Role.destroy_all
 Company.destroy_all
 
+# ============================================================
+# ROLES
+# ============================================================
+puts "🎭 Création des rôles..."
+roles = [
+  { name: "Shipper",   code: "shipper" },
+  { name: "Carrier",   code: "carrier" },
+  { name: "Recipient", code: "recipient" }
+].map { |attrs| Role.create!(attrs) }
+puts "✅ #{roles.count} rôles créés"
 
-def super_admin
-  User.create!(
-    email: ENV['ADMIN_EMAIL'],
-    password: ENV['ADMIN_PASSWORD'],
-    admin: true
+# ============================================================
+# SUPER ADMIN
+# ============================================================
+puts "👑 Création du super-admin..."
+User.create!(
+  email: ENV['ADMIN_EMAIL'] || "superadmin@example.com",
+  password: ENV['ADMIN_PASSWORD'] || "password123",
+  password_confirmation: ENV['ADMIN_PASSWORD'] || "password123",
+  first_name: "Super",
+  last_name: "Admin",
+  super_admin: true,
+  admin: false,
+  company: nil
+)
+puts "✅ Super-admin créé"
+
+# ============================================================
+# COMPANIES APPROUVÉES
+# ============================================================
+puts "🏢 Création des entreprises APPROUVÉES..."
+companies = 6.times.map do |i|
+  Company.create!(
+    name: "Company #{i + 1}",
+    street: "Street #{i + 1}",
+    zipcode: "1000#{i}",
+    country: "France",
+    role: roles.sample,
+    approved: true
   )
-  puts("super Admin créé - login 'DEFAULT_ADMIN' / mdp: '123456'")
+end
+puts "✅ #{companies.count} entreprises créées"
+
+# ============================================================
+# COMPANIES EN ATTENTE
+# ============================================================
+puts "⏳ Création des entreprises EN ATTENTE..."
+5.times do |i|
+  Company.create!(
+    name: "Pending Company #{i + 1}",
+    street: "Pending Street #{i + 1}",
+    zipcode: "9000#{i}",
+    country: "France",
+    role: roles.sample,
+    approved: false
+  )
 end
 
-puts "🏢 Création des entreprises..."
-roles = [:shipper, :carrier, :recipient]
-
-companies = roles.flat_map do |role|
-  3.times.map do |i|
-    Company.create!(
-      name: "#{role.to_s.capitalize} Company #{i + 1}",
-      street: "Street #{i + 1}",
-      zipcode: "1000#{i + 1}",
-      country: "France"
-    ).tap { |c| c.define_singleton_method(:role) { role } }
-  end
-end
-
+# ============================================================
+# USERS (1 ADMIN + 1 USER PAR COMPANY)
+# ============================================================
 puts "👤 Création des utilisateurs..."
-users = companies.flat_map do |company|
-  # 1 admin + 1 utilisateur classique
-  [
-    User.create!(
-      email: "admin@#{company.name.parameterize}.com",
-      password: "password123",
-      password_confirmation: "password123",
-      role: :admin,
-      company: company
-    ),
-    User.create!(
-      email: "user1@#{company.name.parameterize}.com",
-      password: "password123",
-      password_confirmation: "password123",
-      role: company.role,
-      company: company
-    )
-  ]
+companies.each do |company|
+  User.create!(
+    email: "admin@#{company.name.parameterize}.com",
+    password: "password123",
+    password_confirmation: "password123",
+    admin: true,
+    company: company
+  )
+
+  User.create!(
+    email: "user@#{company.name.parameterize}.com",
+    password: "password123",
+    password_confirmation: "password123",
+    admin: false,
+    company: company
+  )
 end
 
-shippers   = users.select { |u| u.role == "shipper" }
-carriers   = users.select { |u| u.role == "carrier" }
-recipients = users.select { |u| u.role == "recipient" }
-
-puts "🔗 Création des connexions Shipper ↔ Carrier ↔ Recipient..."
+# ============================================================
+# USER CONNECTIONS (COMPANY ↔ COMPANY)
+# ============================================================
+puts "🔗 Création des demandes de connexion..."
 connections = []
 
-shippers.each do |shipper|
-  carriers.sample(2).each do |carrier|
-    recipients.sample(2).each do |recipient|
-      connections << UserConnection.create!(
-        shipper: shipper,
-        carrier: carrier,
-        recipient: recipient
-      )
-    end
-  end
+companies.combination(2).each do |requester_company, receiver_company|
+  # chaque connexion doit avoir un rôle spécifié pour le receiver
+  role_for_receiver = roles.sample
+  connections << UserConnection.create!(
+    requester: requester_company,
+    receiver: receiver_company,
+    role: role_for_receiver,
+    status: :accepted
+  )
 end
 
-puts "📦 Génération des PaletteRecords..."
-comments = ["RAS", "Livraison rapide", "Problème à l’arrivée", "Chargement partiel"]
-generated_transports = Set.new
+puts "✅ #{connections.count} connexions créées"
+
+# ============================================================
+# PALETTE RECORDS (LIÉES AUX CONNEXIONS)
+# ============================================================
+puts "📦 Création des PaletteRecords..."
+comments = ["RAS", "Livraison OK", "Problème signalé"]
+transport_codes = Set.new
 
 def unique_transport(existing)
   loop do
@@ -79,76 +118,44 @@ def unique_transport(existing)
   end
 end
 
-# --- Création aléatoire de palettes pour toutes les connexions ---
-connections.each do |conn|
-  3.times do |week_index|
-    start_of_week = Date.today.beginning_of_year + (week_index * 7).days
-    rand(1..3).times do |day_offset|
-      loaded   = rand(10..33)
-      delivered = loaded
-      rendered = rand(0..loaded)
-      returned  = rand(0..delivered)
-      transport_code = unique_transport(generated_transports)
-      generated_transports.add(transport_code)
+connections.each do |connection|
+  # On prend un user aléatoire de chaque company pour représenter le rôle
+  shipper_user   = connection.requester.users.sample
+  carrier_user   = connection.receiver.users.sample
+  recipient_user = connection.receiver.users.sample
 
-      PaletteRecord.create!(
-        user_id: conn.shipper.id,
-        company: conn.shipper.company,
-        shipper: conn.shipper,
-        carrier: conn.carrier,
-        recipient: conn.recipient,
-        week: (week_index % 52) + 1,
-        date: start_of_week + day_offset.days,
-        transport: transport_code,
-        loading_point: conn.shipper.company.name,
-        delivery_point: conn.recipient.company.name,
-        loaded: loaded,
-        rendered: rendered,
-        delivered: delivered,
-        returned: returned,
-        due: 0,
-        comment: comments.sample
-      )
-    end
-  end
-end
-
-# --- Assurer que chaque carrier a plusieurs dettes envers différents shippers et recipients ---
-carriers.each do |carrier|
-  2.times do
-    shipper = shippers.sample
-    recipient = recipients.sample
-    transport_code = unique_transport(generated_transports)
-    generated_transports.add(transport_code)
-
-    loaded = rand(10..25)
-    delivered = loaded
-    rendered = rand(0..loaded)
-    returned = rand(0..delivered)
+  3.times do
+    code = unique_transport(transport_codes)
+    transport_codes << code
 
     PaletteRecord.create!(
-      user_id: shipper.id,
-      company: shipper.company,
-      shipper: shipper,
-      carrier: carrier,
-      recipient: recipient,
+      user: shipper_user,
+      user_connection: connection,
+      company: connection.requester, # la company qui "possède" la palette
+
+      shipper: shipper_user,
+      carrier: carrier_user,
+      recipient: recipient_user,
+
       week: rand(1..52),
       date: Date.today - rand(1..30).days,
-      transport: transport_code,
-      loading_point: shipper.company.name,
-      delivery_point: recipient.company.name,
-      loaded: loaded,
-      rendered: rendered,
-      delivered: delivered,
-      returned: returned,
+      transport: code,
+      loading_point: connection.requester.name,
+      delivery_point: connection.receiver.name,
+      loaded: rand(10..30),
+      delivered: rand(10..30),
+      rendered: rand(0..10),
+      returned: rand(0..5),
       due: 0,
-      comment: "Palette test pour carrier réaliste"
+      comment: comments.sample
     )
   end
 end
 
+
 puts "🎉 Seeds générées avec succès !"
-puts "👉 #{Company.count} companies"
-puts "👉 #{User.count} users"
-puts "👉 #{UserConnection.count} connexions"
-puts "👉 #{PaletteRecord.count} palette records"
+puts "👉 Companies : #{Company.count}"
+puts "👉 Users : #{User.count}"
+puts "👉 Roles : #{Role.count}"
+puts "👉 Connections : #{UserConnection.count}"
+puts "👉 Palettes : #{PaletteRecord.count}"

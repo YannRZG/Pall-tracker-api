@@ -2,8 +2,10 @@ class CompanyUsersController < ApplicationController
   before_action :authenticate_user!
   before_action :admin_only!
 
+  # Liste tous les users de la company
   def index
-    render json: current_user.company.users.active.order(:email)
+    users = current_user.company.users.active.order(:email)
+    render json: users.as_json(only: [:id, :email, :first_name, :last_name]).map { |u| u.merge(role: current_user.company.role.name) }
   end
 
   # Créer une invitation (pas encore de user)
@@ -17,14 +19,13 @@ class CompanyUsersController < ApplicationController
       render json: { errors: invitation.errors.full_messages }, status: :unprocessable_entity
     end
   end
-  
 
   # Update et destroy pour les users existants (pas les invitations)
   def update
     user = current_user.company.users.active.find(params[:id])
     return render json: { error: "Au moins un admin requis" }, status: :unprocessable_entity if removing_last_admin?(user)
 
-    user.update!(role: params[:role])
+    user.update!(admin: params[:admin]) if params.key?(:admin)
     render json: user
   end
 

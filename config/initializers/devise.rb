@@ -19,13 +19,27 @@ Devise.setup do |config|
    # JWT Configurations
    config.jwt do |jwt|
     jwt.secret = Rails.application.credentials.devise_jwt_secret_key || ENV['DEVISE_JWT_SECRET_KEY']
-    jwt.dispatch_requests = [['POST', %r{^/users/sign_in$}]]
+    jwt.dispatch_requests = [
+      ['POST', %r{^/users/sign_in$}],
+      ['POST', %r{^/signup_from_invite$}]
+    ]
     jwt.revocation_requests = [['DELETE', %r{^/users/sign_out$}]]
     jwt.expiration_time = 24.hours.to_i
     jwt.request_formats = {
       user: [:json] # Accepte uniquement les requêtes JSON
     }
   end
+
+  # Durée de la session
+  config.remember_for = 2.weeks
+  # Étend la durée si l'utilisateur revient avant expiration
+  config.extend_remember_period = true
+  # Options du cookie
+  config.rememberable_options = {
+    secure: Rails.env.production?,
+    same_site: :lax,   # ✅ indispensable pour CORS cross-origin
+    httponly: true      # JS ne peut pas le lire
+  }
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.

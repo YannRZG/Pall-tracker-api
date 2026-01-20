@@ -1,19 +1,28 @@
 Rails.application.routes.draw do
-  devise_for :users, controllers: {
-    sessions: 'users/sessions',
-    registrations: 'users/registrations'
-  }
+ 
 
-  devise_scope :user do
-    get '/current_user', to: 'users/sessions#show'
-  end
+  post "/login", to: "sessions#create"
+  delete "/logout", to: "sessions#destroy"
+  get "/current_user", to: "sessions#show"
 
   # =====================
-  # USERS / AUTH
+  # PUBLIC SIGNUP REQUESTS
+  # =====================
+  post "/signup-requests", to: "signup_requests#create"
+
+  get '/invitations/:token', to: 'invitations#show'
+  post '/signup_from_invite', to: 'users#signup_from_invite'
+
+  # =====================
+  # USERS / CONNECTIONS
   # =====================
   resources :users, only: [:index]
 
-  resources :users_connections
+  resources :users_connections, only: [:index, :create, :update, :destroy]
+
+  resources :roles, only: [:index]
+
+  get '/invitations/accept', to: 'invitations#accept', as: 'accept_invitation'
 
   # =====================
   # PALETTES / BUSINESS
@@ -23,7 +32,6 @@ Rails.application.routes.draw do
       get :debt
     end
   end
-
   resources :debts, only: [:index]
 
   # =====================
@@ -33,7 +41,6 @@ Rails.application.routes.draw do
     collection do
       get :debts
     end
-
     member do
       get :dashboard
     end
@@ -57,13 +64,19 @@ Rails.application.routes.draw do
   # SAAS SUPER ADMIN
   # =====================
   namespace :admin do
+    # Dashboard
     get 'dashboard', to: 'dashboard#index'
+
+    # Companies & Users
     resources :companies, only: [:index, :create, :destroy]
     resources :users, only: [:index, :update, :create]
+
+    # Signup Requests Approve / Reject
+    resources :signup_requests, only: [] do
+      member do
+        post :approve
+        post :reject
+      end
+    end
   end
-
-  post '/signup_from_invite', to: 'users#signup_from_invite'
-
-  get '/invitations/accept/:token', to: 'invitations#accept', as: :accept_invitation
-
 end

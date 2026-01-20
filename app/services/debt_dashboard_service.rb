@@ -4,7 +4,9 @@ class DebtDashboardService
   end
 
   def call
-    case @user.role
+    role_code = @user.company.role&.code
+
+    case role_code
     when "shipper"
       debt_for_shipper
     when "carrier"
@@ -155,3 +157,4 @@ class DebtDashboardService
     { owed_by_me: owed_by_me, owed_to_me: owed_to_me }
   end
 end
+

@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
-
+  respond_to :json
+  skip_before_action :authenticate_user!, only: [:signup_from_invite]
 
   def index
     @users = User.all
@@ -18,31 +19,28 @@ class UsersController < ApplicationController
     return render json: { error: "Invitation invalide" }, status: :unprocessable_entity unless invitation
   
     user = User.new(
-      email: invitation.email,
-      password: params[:password],
-      password_confirmation: params[:password_confirmation],
-      company: invitation.company
+      user_params.merge(
+        email: invitation.email,
+        company: invitation.company
+      )
     )
   
     if user.save
       invitation.destroy
   
-      token = JwtService.encode(user_id: user.id)
+      reset_session
+      session[:user_id] = user.id
+      Current.user = user
   
       render json: {
-        token: token,
-        user: {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-          company_id: user.company_id
-        }
+        user: user.as_json(
+          only: [:id, :email, :first_name, :last_name, :phone, :role, :company_id]
+        )
       }, status: :created
     else
       render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
-  end
-  
+  end      
   
   private
   
